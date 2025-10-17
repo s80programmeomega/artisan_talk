@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Auth;
 
 class ContactFactory extends Factory
 {
@@ -11,6 +12,7 @@ class ContactFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
+            'contact_user_id' => User::factory(),
             'name' => fake()->name(),
             'email' => fake()->email(),
             'phone' => fake()->phoneNumber(),

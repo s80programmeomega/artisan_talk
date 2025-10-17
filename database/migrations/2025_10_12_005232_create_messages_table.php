@@ -13,8 +13,9 @@ return new class extends Migration {
 
             $table->morphs('conversation');
             $table->morphs('sender');
-
+            $table->enum('status', ['sent', 'received', 'read'])->default('sent');
             $table->timestamp('read_at')->nullable();
+            $table->userstamps();
             $table->timestamps();
 
         });

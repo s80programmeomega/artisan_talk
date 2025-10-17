@@ -1,6 +1,6 @@
-{{-- Chat Messages Area - Derived from template --}}
+{{-- Chat Messages Area --}}
 <div
-    class="flex-1 overflow-y-auto bg-base-100 p-4"
+    class="h-full overflow-y-auto bg-base-100 p-4"
     id="chat-messages"
     x-data="{
         scrollToBottom() {
@@ -9,6 +9,7 @@
     }"
     x-init="scrollToBottom()"
     @scroll-to-bottom.window="scrollToBottom()"
+    @message-added.window="setTimeout(() => scrollToBottom(), 100)"
 >
     @forelse($messages as $message)
         @livewire('chat.message-bubble', ['message' => $message], key($message->id))
@@ -21,7 +22,6 @@
     @endforelse
 </div>
 
-{{-- Alpine.js script for auto-scrolling --}}
 <script>
     document.addEventListener('livewire:initialized', () => {
         Livewire.on('scrollToBottom', () => {

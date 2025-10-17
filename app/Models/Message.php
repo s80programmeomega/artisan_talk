@@ -13,15 +13,17 @@ class Message extends Model
         'content',
         'conversation_id',
         'conversation_type',
-        'sendable_id',
-        'sendable_type',
+        'sender_id',
+        'sender_type',
         'read_at',
+        'status',
     ];
 
     protected function casts(): array
     {
         return [
             'read_at' => 'datetime',
+            'status' => 'string'
         ];
     }
 

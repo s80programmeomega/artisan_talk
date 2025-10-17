@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('chats', function (Blueprint $table) {
             $table->id();
             $table->timestamp('last_message_at')->nullable();
+            $table->userstamps();
             $table->timestamps();
         });
     }

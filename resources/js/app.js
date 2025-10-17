@@ -2,8 +2,19 @@ import './bootstrap';
 
 
 // Disable this alpine to avoid any duplicate loading together with alpine from livewire
-import Alpine from 'alpinejs';
+// import Alpine from 'alpinejs';
 
-window.Alpine = Alpine;
+// window.Alpine = Alpine;
 
-Alpine.start();
+// Alpine.start();
+
+import './bootstrap';
+
+// Only load Alpine if Livewire isn't present (for Breeze pages)
+if (!window.Livewire) {
+    import('alpinejs').then(Alpine => {
+        window.Alpine = Alpine.default;
+        Alpine.default.start();
+    });
+}
+

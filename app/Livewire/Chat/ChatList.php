@@ -5,6 +5,7 @@ namespace App\Livewire\Chat;
 use Livewire\Component;
 use App\Models\Chat;
 use App\Models\Contact;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
 
 /**
@@ -41,6 +42,9 @@ class ChatList extends Component
         return Chat::with(['contacts', 'messages' => function($query) {
                 $query->latest()->limit(1);
             }])
+            ->whereHas('contacts', function($query) {
+                $query->where('user_id', Auth::id());
+            })
             ->when($this->search, function($query) {
                 $query->whereHas('contacts', function($q) {
                     $q->where('name', 'like', '%' . $this->search . '%');
@@ -49,6 +53,7 @@ class ChatList extends Component
             ->orderBy('last_message_at', 'desc')
             ->get();
     }
+
 
     public function render()
     {

@@ -10,12 +10,22 @@ class ContactSeeder extends Seeder
 {
     public function run(): void
     {
-        $users = User::factory(10)->create();
+        $users = User::all();
+        if ($users->count() < 2) {
+            $users = User::factory(10)->create();
+        }
 
         foreach ($users as $user) {
-            Contact::factory(rand(3, 8))->create([
-                'user_id' => $user->id,
-            ]);
+            $otherUsers = $users->where('id', '!=', $user->id)->random(rand(3, 5));
+
+            foreach ($otherUsers as $contactUser) {
+                Contact::factory()->create([
+                    'user_id' => $user->id,
+                    'contact_user_id' => $contactUser->id,
+                    'name' => $contactUser->name,
+                    'email' => $contactUser->email,
+                ]);
+            }
         }
     }
 }

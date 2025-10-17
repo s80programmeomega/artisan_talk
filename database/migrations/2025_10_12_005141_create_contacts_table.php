@@ -11,14 +11,16 @@ return new class extends Migration
         Schema::create('contacts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('contact_user_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->string('name')->nullable();
             $table->string('email');
             $table->string('phone');
             $table->unique(['user_id', 'email', 'phone']);
+            $table->userstamps();
             $table->timestamps();
-
         });
     }
+
 
     public function down(): void
     {

@@ -2,31 +2,35 @@
 
 namespace App\Livewire\Chat;
 
-use Livewire\Component;
 use App\Models\Chat;
 use App\Models\Message;
 use Livewire\Attributes\On;
+use Livewire\Component;
 
-/**
- * Chat Window Component - Displays messages for the active chat
- * Handles real-time message updates and scrolling
- */
 class ChatWindow extends Component
 {
-    public int $chatId;
-    public $messages;
+    public ?int $chatId = null;
+    public $messages = [];
 
-    public function mount(int $chatId): void
+    public function mount(?int $chatId = null): void
     {
         $this->chatId = $chatId;
         $this->loadMessages();
     }
 
-    /**
-     * Load messages for the current chat
-     */
+    #[On('chatSelected')]
+    public function updateChat(int $chatId): void
+    {
+        $this->chatId = $chatId;
+        $this->loadMessages();
+        $this->dispatch('scrollToBottom');
+    }
+
     public function loadMessages(): void
     {
+        if (!$this->chatId)
+            return;
+
         $this->messages = Message::where('conversation_type', Chat::class)
             ->where('conversation_id', $this->chatId)
             ->with(['sender'])
@@ -34,27 +38,11 @@ class ChatWindow extends Component
             ->get();
     }
 
-    /**
-     * Listen for new messages and refresh the chat
-     */
     #[On('messageAdded')]
     public function refreshMessages(): void
     {
         $this->loadMessages();
-
-        // Dispatch event to scroll to bottom
         $this->dispatch('scrollToBottom');
-    }
-
-    /**
-     * Listen for chat selection to reload messages
-     */
-    #[On('chatSelected')]
-    public function handleChatSelected(int $chatId): void
-    {
-        if ($this->chatId === $chatId) {
-            $this->loadMessages();
-        }
     }
 
     public function render()

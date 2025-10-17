@@ -14,6 +14,7 @@ return new class extends Migration
             $table->foreignId('contact_id')->constrained()->onDelete('cascade');
             $table->enum('role', ['admin', 'member', 'guest'])->default('member');
             $table->timestamp('joined_at')->useCurrent();
+            $table->userstamps();
             $table->timestamps();
 
             $table->unique(['group_id', 'contact_id']);
