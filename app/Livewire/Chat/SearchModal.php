@@ -2,15 +2,31 @@
 
 namespace App\Livewire\Chat;
 
-use Livewire\Component;
 use App\Models\Message;
+use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\On;
+use Livewire\Component;
+use  App\Models\Chat;
+use Livewire\WithPagination;
 
 class SearchModal extends Component
 {
+
+    use WithPagination;
+
     public bool $showModal = false;
     public string $searchQuery = '';
-    public $searchResults = [];
+    // public $searchResults = [];
 
+    // protected $paginationTheme = 'bootstrap';
+
+    public function updatingSearchQuery()
+    {
+        $this->resetPage();
+    }
+
+
+    #[On('openSearch')]
     public function openModal(): void
     {
         $this->showModal = true;
@@ -20,22 +36,46 @@ class SearchModal extends Component
     {
         $this->showModal = false;
         $this->searchQuery = '';
-        $this->searchResults = [];
+        // $this->searchResults = [];
     }
 
-    public function search(): void
+    public function search()
     {
-        if (strlen($this->searchQuery) < 3) return;
+        if (strlen($this->searchQuery) < 3) {
+            return new \Illuminate\Pagination\LengthAwarePaginator([], 0, 10);
+        }
 
-        $this->searchResults = Message::where('content', 'like', '%' . $this->searchQuery . '%')
+        // Get all chats where current user is involved
+        $userChatIds = Chat::whereHas('contacts', function($query) {
+            $query->where('contact_user_id', Auth::id())
+                  ->orWhere('user_id', Auth::id());
+        })->pluck('id');
+
+        // Search messages in those chats
+        return Message::where('content', 'like', '%' . $this->searchQuery . '%')
+            // ->where('conversation_type', 'App\Models\Chat')
+            ->whereIn('conversation_id', $userChatIds)
             ->with(['sender', 'conversation'])
             ->latest()
-            ->limit(20)
             ->get();
+            // ->paginate(2, ['*'], 'page');
     }
+
+
+    // public function search()
+    // {
+    //     if (strlen($this->searchQuery) < 3) {
+    //         // $this->searchResults = [];
+    //         return new \Illuminate\Pagination\LengthAwarePaginator([], 0, 10);
+    //     }
+    //     return Message::where('content', 'like', '%' . $this->searchQuery . '%')
+    //         ->with(['sender', 'conversation'])
+    //         ->latest()
+    //         ->paginate(perPage: 5);
+    // }
 
     public function render()
     {
-        return view('livewire.chat.search-modal');
+        return view('livewire.chat.search-modal', ['searchResults' => $this->search()]);
     }
 }

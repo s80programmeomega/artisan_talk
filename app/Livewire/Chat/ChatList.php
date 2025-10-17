@@ -31,7 +31,7 @@ class ChatList extends Component
      */
     public function selectChat(int $chatId): void
     {
-        $this->dispatch('chatSelected', chatId: $chatId)->to(ChatPage::class);
+        $this->dispatch('chatSelected', chatId: $chatId);
     }
 
     /**

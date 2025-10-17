@@ -26,6 +26,8 @@ class ChatWindow extends Component
         $this->dispatch('scrollToBottom');
     }
 
+
+
     public function loadMessages(): void
     {
         if (!$this->chatId)
@@ -44,6 +46,60 @@ class ChatWindow extends Component
         $this->loadMessages();
         $this->dispatch('scrollToBottom');
     }
+
+    // #[On('scrollToMessage')]
+    // public function scrollToMessage(int $messageId): void
+    // {
+    //     $this->js("
+    //         setTimeout(() => {
+    //             const element = document.getElementById('message-{$messageId}');
+    //             console.log('Looking for message-{$messageId}:', element);
+    //             if (element) {
+    //                 element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    //                 element.style.backgroundColor = '#fef08a';
+    //                 element.style.transition = 'background-color 0.3s';
+    //                 setTimeout(() => {
+    //                     element.style.backgroundColor = '';
+    //                 }, 2000);
+    //             } else {
+    //                 console.log('Message element not found: message-{$messageId}');
+    //             }
+    //         }, 500);
+    //     ");
+    // }
+
+
+    #[On('scrollToMessage')]
+    public function scrollToMessage(int $messageId): void
+    {
+        $this->js("
+            setTimeout(() => {
+                const element = document.getElementById('message-{$messageId}');
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    element.classList.add('bg-yellow-200');
+                    setTimeout(() => element.classList.remove('bg-yellow-200'), 2000);
+                }
+            }, 100);
+        ");
+    }
+
+
+    // #[On('scrollToMessage')]
+    // public function scrollToMessage(int $messageId): void
+    // {
+    //     $this->js("
+    //         setTimeout(() => {
+    //             const element = document.getElementById('message-{$messageId}');
+    //             if (element) {
+    //                 element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    //                 element.classList.add('bg-yellow-200');
+    //                 setTimeout(() => element.classList.remove('bg-yellow-200'), 2000);
+    //             }
+    //         }, 100);
+    //     ");
+    // }
+
 
     public function render()
     {

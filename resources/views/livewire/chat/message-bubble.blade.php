@@ -1,5 +1,5 @@
 {{-- Message Bubble with different styles for sent/received --}}
-<div class="mb-4 {{ $isSentByCurrentUser ? 'flex justify-end' : 'flex justify-start' }}">
+<div class="mb-4 {{ $isSentByCurrentUser ? 'flex justify-end' : 'flex justify-start' }}" id="message-{{ $message->id }}">
     <div class="max-w-xs lg:max-w-md">
         {{-- Message Content --}}
         <div class="

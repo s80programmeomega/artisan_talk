@@ -8,7 +8,7 @@
     <div class="drawer-content flex flex-col h-screen">
         {{-- Chat Header with Search Integration --}}
         <div class="flex-shrink-0">
-            @livewire('chat.chat-header', ['key' => 'chat-header-' . ($activeChatId ?? 0)])
+            @livewire('chat.chat-header', ['chatId' => $activeChatId, 'key' => 'chat-header-' . ($activeChatId ?? 0)])
         </div>
 
         {{-- Chat Messages Area --}}
@@ -20,7 +20,7 @@
 
             {{-- Chat Window - Scrollable Messages --}}
             <div class="flex-1 min-h-0">
-                <livewire:chat.chat-window :chatId="$activeChatId" :key="'chat-window-' . ($activeChatId ?? 0)" />
+                <livewire:chat.chat-window :chatId="$activeChatId" :key="'chat-window-static'" />
             </div>
 
             {{-- Message Input - Fixed at Bottom --}}
