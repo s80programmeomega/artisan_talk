@@ -17,7 +17,7 @@ class MessageInput extends Component
 {
     use WithFileUploads;
 
-    public int $chatId;
+    public ?int $chatId = null;
     public string $messageContent = '';
     public $attachment;
 
@@ -30,8 +30,26 @@ class MessageInput extends Component
         $this->attachment = null;
     }
 
+    private function getAttachmentType(string $mimeType): string
+    {
+        if (str_starts_with($mimeType, 'image/')) {
+            return 'photo';
+        }
+
+        if (str_starts_with($mimeType, 'video/')) {
+            return 'video';
+        }
+
+        return 'document';
+    }
+
     public function sendMessage(): void
     {
+        if (!$this->chatId) {
+            session()->flash('error', 'Please select a chat first.');
+            return;
+        }
+
         $this->validate([
             'messageContent' => 'required_without:attachment|string|max:1000',
             'attachment' => 'nullable|file|max:10240', // 10MB max
@@ -50,11 +68,11 @@ class MessageInput extends Component
 
         // Create the message
         $message = Message::create([
-            'content' => $this->messageContent ?: null,
+            'content' => $this->messageContent ?: '',
             'conversation_type' => Chat::class,
             'conversation_id' => $this->chatId,
-            'sendable_type' => Contact::class,
-            'sendable_id' => $currentUserContact->id,
+            'sender_type' => Contact::class,  // Changed from 'sendable_type'
+            'sender_id' => $currentUserContact->id,  // Changed from 'sendable_id'
         ]);
 
         // Handle attachment if present
@@ -63,7 +81,7 @@ class MessageInput extends Component
 
             Attachment::create([
                 'message_id' => $message->id,
-                'type' => 'file',
+                'type' => $this->getAttachmentType($this->attachment->getMimeType()),
                 'filename' => $this->attachment->getClientOriginalName(),
                 'path' => $path,
                 'mime_type' => $this->attachment->getMimeType(),

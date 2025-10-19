@@ -9,9 +9,7 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 });
 
 Broadcast::channel('chat.{id}', function (User $user, $id) {
-    if(Auth::id() == $user->id()){
-        return $user->only('id', 'name', 'email');
-    }
+    return $user->only('id', 'name', 'email');
 });
 
 // Broadcast::channel('group.{id}', function ($user, $id) {

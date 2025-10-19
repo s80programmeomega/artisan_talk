@@ -16,7 +16,7 @@
                         <img src="https://ui-avatars.com/api/?name={{ auth()->user()->name }}" alt="Profile" />
                     </div>
                 </div>
-                <h2 class="font-semibold">Artisan Talk</h2>
+                <h2 class="font-semibold">{{ auth()->user()->name }}</h2>
             </div>
             <div class="flex gap-2">
                 <button class="btn btn-ghost btn-circle btn-sm" title="New Chat">
@@ -47,8 +47,15 @@
     <div class="overflow-y-auto flex-1">
         @forelse($this->chats as $chat)
             @php
-                $contact = $chat->contacts->first();
-                $lastMessage = $chat->messages->first();
+                $chat_contacts = $chat->contacts;
+                $contact = null;
+                foreach($chat_contacts as $c) {
+                    if($c->contact_user_id !== auth()->id()) {
+                        $contact = $c;
+                        break;
+                    }
+                }
+                $lastMessage = $chat->messages->sortByDesc('created_at')->first();
             @endphp
 
             <div
@@ -64,11 +71,18 @@
                 <div class="flex-1 min-w-0">
                     <div class="flex justify-between items-start">
                         <h3 class="font-semibold truncate">{{ $contact->name ?? 'Unknown Contact' }}</h3>
-                        @if($lastMessage)
-                            <span class="text-xs text-base-content/70">
-                                {{ $lastMessage->created_at->format('H:i') }}
-                            </span>
-                        @endif
+                        <div class="flex items-center gap-2">
+                            @if($lastMessage)
+                                <span class="text-xs text-base-content/70">
+                                    {{ $lastMessage->created_at->format('H:i') }}
+                                </span>
+                            @endif
+                            @if($chat->unread_count > 0)
+                                <div class="badge badge-primary badge-sm">
+                                    {{ $chat->unread_count > 99 ? '99+' : $chat->unread_count }}
+                                </div>
+                            @endif
+                        </div>
                     </div>
 
                     @if($lastMessage)
@@ -80,6 +94,7 @@
                     @endif
                 </div>
             </div>
+
         @empty
             <div class="p-4 text-center text-base-content/70">
                 <p>No chats found</p>

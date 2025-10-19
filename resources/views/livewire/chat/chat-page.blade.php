@@ -25,7 +25,7 @@
 
             {{-- Message Input - Fixed at Bottom --}}
             <div class="flex-shrink-0">
-                @livewire('chat.message-input', ['key' => 'message-input-' . ($activeChatId ?? 0)])
+                @livewire('chat.message-input', ['chatId' => $activeChatId, 'key' => 'message-input-' . ($activeChatId ?? 0)])
             </div>
         @else
             {{-- Welcome Screen --}}

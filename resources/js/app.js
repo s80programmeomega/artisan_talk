@@ -8,7 +8,6 @@ import './bootstrap';
 
 // Alpine.start();
 
-import './bootstrap';
 
 // Only load Alpine if Livewire isn't present (for Breeze pages)
 if (!window.Livewire) {

@@ -29,6 +29,10 @@
             if (chatMessages) {
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
+            if (!window.Echo) {
+                console.error('Echo not initialized');
+                return;
+            }
         });
     });
 </script>

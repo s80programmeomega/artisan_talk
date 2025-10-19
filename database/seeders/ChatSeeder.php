@@ -12,6 +12,7 @@ class ChatSeeder extends Seeder
     public function run(): void
     {
         $users = User::all();
+        $processedPairs = [];
 
         foreach ($users as $user) {
             $userContacts = Contact::where('user_id', $user->id)->get();
@@ -22,11 +23,20 @@ class ChatSeeder extends Seeder
                     ->first();
 
                 if ($otherUserContact) {
+                    // Create a unique key for this contact pair
+                    $pairKey = collect([$contact->id, $otherUserContact->id])->sort()->implode('-');
+
+                    // Skip if we've already processed this pair
+                    if (in_array($pairKey, $processedPairs)) {
+                        continue;
+                    }
+
                     $chat = Chat::factory()->create();
                     $chat->contacts()->attach([$contact->id, $otherUserContact->id]);
+
+                    $processedPairs[] = $pairKey;
                 }
             }
         }
     }
-
 }

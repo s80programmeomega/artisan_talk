@@ -14,7 +14,6 @@ class MessageFactory extends Factory
     {
         return [
             'content' => fake()->sentence(),
-            'read_at' => fake()->optional()->dateTimeBetween('-1 week', 'now'),
         ];
     }
 

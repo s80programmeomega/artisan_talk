@@ -62,18 +62,6 @@ class SearchModal extends Component
     }
 
 
-    // public function search()
-    // {
-    //     if (strlen($this->searchQuery) < 3) {
-    //         // $this->searchResults = [];
-    //         return new \Illuminate\Pagination\LengthAwarePaginator([], 0, 10);
-    //     }
-    //     return Message::where('content', 'like', '%' . $this->searchQuery . '%')
-    //         ->with(['sender', 'conversation'])
-    //         ->latest()
-    //         ->paginate(perPage: 5);
-    // }
-
     public function render()
     {
         return view('livewire.chat.search-modal', ['searchResults' => $this->search()]);
